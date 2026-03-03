@@ -1,6 +1,6 @@
 import { FakerError } from '../../errors/faker-error';
 import { ModuleBase } from '../../internal/module-base';
-import { filterWordListByLength } from './filter-word-list-by-length';
+import { filterWordListByLength } from './_filter-word-list-by-length';
 
 /**
  * Module to return various types of words.
