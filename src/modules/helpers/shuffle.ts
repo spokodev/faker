@@ -44,6 +44,7 @@ export function shuffle<const T>(
  *
  * @since 2.0.1
  */
+// @ts-expect-error TS2394 -- Implementation cannot fullfil the readonly array part, since it needs to comply with the inplace version of the function.
 export function shuffle<const T>(
   fakerCore: FakerCore,
   list: ReadonlyArray<T>,
@@ -85,7 +86,6 @@ export function shuffle<const T>(
     inplace?: boolean;
   }
 ): T[];
-
 export function shuffle<const T>(
   fakerCore: FakerCore,
   list: T[],
