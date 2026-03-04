@@ -10,6 +10,9 @@ import { firstName as personFirstName } from '../person/first-name';
 import { fullName as personFullName } from '../person/full-name';
 import { lastName as personLastName } from '../person/last-name';
 
+// temp export
+export const nbsp = '\u00A0';
+
 /**
  * Generates a random commit entry as printed by `git log`.
  *
