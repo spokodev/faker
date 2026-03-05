@@ -5,9 +5,9 @@ import { int } from '../number/int';
 /**
  * Generates a random image url provided via https://loremflickr.com.
  *
- * @param fakerCore The FakerCore to use.
  * @remark This method generates a random string representing an URL from loremflickr. Faker is not responsible for the content of the image or the service providing it.
  *
+ * @param fakerCore The FakerCore to use.
  * @param options Options for generating a URL for an image.
  * @param options.width The width of the image. Defaults to a random integer between `1` and `3999`.
  * @param options.height The height of the image. Defaults to a random integer between `1` and `3999`.
