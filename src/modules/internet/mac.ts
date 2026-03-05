@@ -61,7 +61,6 @@ export function mac(
         separator?: string;
       }
 ): string;
-
 export function mac(
   fakerCore: FakerCore,
   options:
