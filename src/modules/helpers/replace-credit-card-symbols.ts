@@ -110,7 +110,7 @@ function legacyRegexpStringParse(
  *
  * @since 8.4.0
  */
-function legacyReplaceSymbolWithNumber(
+export function legacyReplaceSymbolWithNumber(
   fakerCore: FakerCore,
   string: string = '',
   symbol: string = '#'
