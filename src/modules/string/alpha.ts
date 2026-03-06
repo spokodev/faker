@@ -3,6 +3,8 @@ import type { LiteralUnion } from '../../internal/types';
 import type { Casing } from '../../utils/types';
 import { rangeToNumber } from '../helpers/range-to-number';
 import { fromCharacters } from '../string/from-characters';
+import type { AlphaChar } from './_types';
+import { LOWER_CHARS, UPPER_CHARS } from './_types';
 
 /**
  * Generating a string consisting of letters in the English alphabet.

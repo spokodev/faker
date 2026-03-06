@@ -1,6 +1,8 @@
 import type { FakerCore } from '../../core';
 import { fromCharacters } from '../string/from-characters';
 
+const OCTAL_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7'];
+
 /**
  * Returns an [octal](https://en.wikipedia.org/wiki/Octal) string.
  *
@@ -48,13 +50,9 @@ export function octal(
     prefix?: string;
   } = {}
 ): string {
-  const { prefix = '0o' } = options;
+  const { prefix = '0o', length = 1 } = options;
 
   let result = prefix;
-  result += fromCharacters(
-    fakerCore,
-    ['0', '1', '2', '3', '4', '5', '6', '7'],
-    options.length ?? 1
-  );
+  result += fromCharacters(fakerCore, OCTAL_CHARS, length);
   return result;
 }
