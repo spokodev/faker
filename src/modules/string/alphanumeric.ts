@@ -3,6 +3,8 @@ import type { LiteralUnion } from '../../internal/types';
 import type { Casing } from '../../utils/types';
 import { rangeToNumber } from '../helpers/range-to-number';
 import { fromCharacters } from '../string/from-characters';
+import type { AlphaNumericChar } from './_types';
+import { DIGIT_CHARS, LOWER_CHARS, UPPER_CHARS } from './_types';
 
 /**
  * Generating a string consisting of alpha characters and digits.
