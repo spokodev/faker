@@ -1,5 +1,6 @@
 import { SimpleModuleBase } from '../../internal/module-base';
 import type { LiteralUnion } from '../../internal/types';
+import type { Casing } from '../../utils/types';
 import type { AlphaChar, AlphaNumericChar, NumericChar } from './_types';
 import { alpha as stringAlpha } from './alpha';
 import { alphanumeric as stringAlphanumeric } from './alphanumeric';

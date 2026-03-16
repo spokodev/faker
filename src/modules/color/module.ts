@@ -1,4 +1,5 @@
 import { ModuleBase } from '../../internal/module-base';
+import type { Casing } from '../../utils/types';
 import type {
   ColorFormat,
   NumberColorFormat,
