@@ -1,5 +1,6 @@
 import type { Faker } from '../../faker';
 import { SimpleModuleBase } from '../../internal/module-base';
+import { fakeEval } from './_eval';
 import { arrayElement as helpersArrayElement } from './array-element';
 import { arrayElements as helpersArrayElements } from './array-elements';
 import { enumValue as helpersEnumValue } from './enum-value';
