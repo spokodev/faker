@@ -1,9 +1,16 @@
-import type { DateEntryDefinition } from '../../definitions';
-import { FakerError } from '../../errors/faker-error';
 import type { Faker } from '../../faker';
-import { toDate } from '../../internal/date';
-import { assertLocaleData } from '../../internal/locale-proxy';
 import { SimpleModuleBase } from '../../internal/module-base';
+import { anytime as dateAnytime } from './anytime';
+import { between as dateBetween } from './between';
+import { betweens as dateBetweens } from './betweens';
+import { birthdate as dateBirthdate } from './birthdate';
+import { future as dateFuture } from './future';
+import { month as dateMonth } from './month';
+import { past as datePast } from './past';
+import { recent as dateRecent } from './recent';
+import { soon as dateSoon } from './soon';
+import { timeZone as dateTimeZone } from './time-zone';
+import { weekday as dateWeekday } from './weekday';
 
 /**
  * Module to generate dates (without methods requiring localized data).
@@ -13,7 +20,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    * Generates a random date that can be either in the past or in the future.
    *
    * @param options The optional options object.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @see faker.date.between(): For generating dates in a specific range.
    * @see faker.date.past(): For generating dates explicitly in the past.
@@ -34,13 +41,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const { refDate = this.faker.defaultRefDate() } = options;
-    const time = toDate(refDate).getTime();
-
-    return this.between({
-      from: time - 1000 * 60 * 60 * 24 * 365,
-      to: time + 1000 * 60 * 60 * 24 * 365,
-    });
+    return dateAnytime(this.faker.fakerCore, options);
   }
 
   /**
@@ -48,7 +49,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    *
    * @param options The optional options object.
    * @param options.years The range of years the date may be in the past. Either as a fixed amount of years or as a year range. Defaults to `1`.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @throws {FakerError} If `years.max` is less than 0.
    * @throws {FakerError} If `years.min` is greater than or equal to `years.max`.
@@ -94,32 +95,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const { refDate = this.faker.defaultRefDate() } = options;
-    let { years = 1 } = options;
-    if (typeof years === 'number') {
-      years = { min: 0, max: years };
-    }
-
-    if (years.max <= 0) {
-      throw new FakerError('Years must be greater than 0.');
-    }
-
-    if (years.min >= years.max) {
-      throw new FakerError(
-        'The maximum amount of years must be greater than the minimum amount of years.'
-      );
-    }
-
-    const time = toDate(refDate);
-    const from = new Date(time);
-    from.setUTCFullYear(from.getUTCFullYear() - years.max);
-    const to = new Date(time);
-    to.setUTCFullYear(to.getUTCFullYear() - years.min);
-
-    return this.between({
-      from,
-      to: to.getTime() - 1000,
-    });
+    return datePast(this.faker.fakerCore, options);
   }
 
   /**
@@ -127,7 +103,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    *
    * @param options The optional options object.
    * @param options.years The range of years the date may be in the future. Either as a fixed amount of years or as a year range. Defaults to `1`.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @throws {FakerError} If `years.max` is less than 0.
    * @throws {FakerError} If `years.min` is greater than or equal to `years.max`.
@@ -173,32 +149,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const { refDate = this.faker.defaultRefDate() } = options;
-    let { years = 1 } = options;
-    if (typeof years === 'number') {
-      years = { min: 0, max: years };
-    }
-
-    if (years.max <= 0) {
-      throw new FakerError('Years must be greater than 0.');
-    }
-
-    if (years.min >= years.max) {
-      throw new FakerError(
-        'The maximum amount of years must be greater than the minimum amount of years.'
-      );
-    }
-
-    const time = toDate(refDate);
-    const from = new Date(time);
-    from.setUTCFullYear(from.getUTCFullYear() + years.min);
-    const to = new Date(time);
-    to.setUTCFullYear(to.getUTCFullYear() + years.max);
-
-    return this.between({
-      from: from.getTime() + 1000,
-      to,
-    });
+    return dateFuture(this.faker.fakerCore, options);
   }
 
   /**
@@ -226,15 +177,7 @@ export class SimpleDateModule extends SimpleModuleBase {
      */
     to: string | Date | number;
   }): Date {
-    const { from, to } = options;
-
-    const fromMs = toDate(from, 'from').getTime();
-    const toMs = toDate(to, 'to').getTime();
-    if (fromMs > toMs) {
-      throw new FakerError('`from` date must be before `to` date.');
-    }
-
-    return new Date(this.faker.number.int({ min: fromMs, max: toMs }));
+    return dateBetween(this.faker.fakerCore, options);
   }
 
   /**
@@ -293,10 +236,7 @@ export class SimpleDateModule extends SimpleModuleBase {
           max: number;
         };
   }): Date[] {
-    const { from, to, count = 3 } = options;
-    return this.faker.helpers
-      .multiple(() => this.between({ from, to }), { count })
-      .toSorted((a, b) => a.getTime() - b.getTime());
+    return dateBetweens(this.faker.fakerCore, options);
   }
 
   /**
@@ -304,7 +244,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    *
    * @param options The optional options object.
    * @param options.days The range of days the date may be in the past. Either as a fixed amount of days or as a day range. Defaults to `1`.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @throws {FakerError} If `days.max` is less than 0.
    * @throws {FakerError} If `days.min` is greater than or equal to `days.max`.
@@ -350,32 +290,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const { refDate = this.faker.defaultRefDate() } = options;
-    let { days = 1 } = options;
-    if (typeof days === 'number') {
-      days = { min: 0, max: days };
-    }
-
-    if (days.max <= 0) {
-      throw new FakerError('Days must be greater than 0.');
-    }
-
-    if (days.min >= days.max) {
-      throw new FakerError(
-        'The maximum amount of days must be greater than the minimum amount of days.'
-      );
-    }
-
-    const time = toDate(refDate);
-    const from = new Date(time);
-    from.setUTCDate(from.getUTCDate() - days.max);
-    const to = new Date(time);
-    to.setUTCDate(to.getUTCDate() - days.min);
-
-    return this.between({
-      from,
-      to: to.getTime() - 1000,
-    });
+    return dateRecent(this.faker.fakerCore, options);
   }
 
   /**
@@ -383,7 +298,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    *
    * @param options The optional options object.
    * @param options.days The range of days the date may be in the future. Either as a fixed amount of days or as a day range. Defaults to `1`.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @throws {FakerError} If `days.max` is less than 0.
    * @throws {FakerError} If `days.min` is greater than or equal to `days.max`.
@@ -429,32 +344,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const { refDate = this.faker.defaultRefDate() } = options;
-    let { days = 1 } = options;
-    if (typeof days === 'number') {
-      days = { min: 0, max: days };
-    }
-
-    if (days.max <= 0) {
-      throw new FakerError('Days must be greater than 0.');
-    }
-
-    if (days.min >= days.max) {
-      throw new FakerError(
-        'The maximum amount of days must be greater than the minimum amount of days.'
-      );
-    }
-
-    const time = toDate(refDate);
-    const from = new Date(time);
-    from.setUTCDate(from.getUTCDate() + days.min);
-    const to = new Date(time);
-    to.setUTCDate(to.getUTCDate() + days.max);
-
-    return this.between({
-      from: from.getTime() + 1000,
-      to,
-    });
+    return dateSoon(this.faker.fakerCore, options);
   }
 
   /**
@@ -462,7 +352,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    * But you can customize the `'age'` range or the `'year'` range to generate a more specific birthdate.
    *
    * @param options The options to use to generate the birthdate.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @example
    * faker.date.birthdate() // '1977-07-10T01:37:30.719Z'
@@ -484,7 +374,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    * @param options.mode `'age'` to generate a birthdate based on the age range. It is also possible to generate a birthdate based on a `'year'` range.
    * @param options.min The minimum age to generate a birthdate for.
    * @param options.max The maximum age to generate a birthdate for.
-   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.defaultRefDate()`.
+   * @param options.refDate The date to use as reference point for the newly generated date. Defaults to `faker.getDefaultRefDate()`.
    *
    * @example
    * faker.date.birthdate({ mode: 'age', min: 18, max: 65 }) // '2003-11-02T20:03:20.116Z'
@@ -550,7 +440,7 @@ export class SimpleDateModule extends SimpleModuleBase {
    * @param options.max The maximum age or year to generate a birthdate in.
    * @param options.refDate The date to use as reference point for the newly generated date.
    * Only used when `mode` is `'age'`.
-   * Defaults to `faker.defaultRefDate()`.
+   * Defaults to `faker.getDefaultRefDate()`.
    *
    * @example
    * faker.date.birthdate() // '1977-07-10T01:37:30.719Z'
@@ -599,48 +489,7 @@ export class SimpleDateModule extends SimpleModuleBase {
       refDate?: string | Date | number;
     } = {}
   ): Date {
-    const {
-      mode = 'age',
-      min = 18,
-      max = 80,
-      refDate: rawRefDate = this.faker.defaultRefDate(),
-    } = options;
-
-    const refDate = toDate(rawRefDate);
-    const refYear = refDate.getUTCFullYear();
-
-    switch (mode) {
-      case 'age': {
-        // Add one day to the `from` date to avoid generating the same date as the reference date.
-        const oneDay = 24 * 60 * 60 * 1000;
-        const from =
-          new Date(refDate).setUTCFullYear(refYear - max - 1) + oneDay;
-        const to = new Date(refDate).setUTCFullYear(refYear - min);
-
-        if (from > to) {
-          throw new FakerError(
-            `Max age ${max} should be greater than or equal to min age ${min}.`
-          );
-        }
-
-        return this.between({ from, to });
-      }
-
-      case 'year': {
-        // Avoid generating dates on the first and last date of the year
-        // to avoid running into other years depending on the timezone.
-        const from = new Date(Date.UTC(0, 0, 2)).setUTCFullYear(min);
-        const to = new Date(Date.UTC(0, 11, 30)).setUTCFullYear(max);
-
-        if (from > to) {
-          throw new FakerError(
-            `Max year ${max} should be greater than or equal to min year ${min}.`
-          );
-        }
-
-        return this.between({ from, to });
-      }
-    }
+    return dateBirthdate(this.faker.fakerCore, options);
   }
 }
 
@@ -710,21 +559,7 @@ export class DateModule extends SimpleDateModule {
       context?: boolean;
     } = {}
   ): string {
-    const { abbreviated = false, context = false } = options;
-
-    const source = this.faker.definitions.date.month;
-    let type: keyof DateEntryDefinition;
-    if (abbreviated) {
-      const useContext = context && source['abbr_context'] != null;
-      type = useContext ? 'abbr_context' : 'abbr';
-    } else {
-      const useContext = context && source['wide_context'] != null;
-      type = useContext ? 'wide_context' : 'wide';
-    }
-
-    const values = source[type];
-    assertLocaleData(values, 'date.month', type);
-    return this.faker.helpers.arrayElement(values);
+    return dateMonth(this.faker.fakerCore, options);
   }
 
   /**
@@ -762,21 +597,7 @@ export class DateModule extends SimpleDateModule {
       context?: boolean;
     } = {}
   ): string {
-    const { abbreviated = false, context = false } = options;
-
-    const source = this.faker.definitions.date.weekday;
-    let type: keyof DateEntryDefinition;
-    if (abbreviated) {
-      const useContext = context && source['abbr_context'] != null;
-      type = useContext ? 'abbr_context' : 'abbr';
-    } else {
-      const useContext = context && source['wide_context'] != null;
-      type = useContext ? 'wide_context' : 'wide';
-    }
-
-    const values = source[type];
-    assertLocaleData(values, 'date.weekday', type);
-    return this.faker.helpers.arrayElement(values);
+    return dateWeekday(this.faker.fakerCore, options);
   }
 
   /**
@@ -793,8 +614,6 @@ export class DateModule extends SimpleDateModule {
    * @since 9.0.0
    */
   timeZone(): string {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.date.time_zone
-    );
+    return dateTimeZone(this.faker.fakerCore);
   }
 }

@@ -1,11 +1,15 @@
 import { ModuleBase } from '../../internal/module-base';
 import type { AircraftType } from './aircraft-type';
-import { Aircraft } from './aircraft-type';
+import { aircraftType as airlineAircraftType } from './aircraft-type';
 import type { Airline } from './airline';
+import { airline as airlineAirline } from './airline';
 import type { Airplane } from './airplane';
+import { airplane as airlineAirplane } from './airplane';
 import type { Airport } from './airport';
-import { numerics, visuallySimilarCharacters } from './record-locator';
-import { aircraftTypeMaxRows, aircraftTypeSeats } from './seat';
+import { airport as airlineAirport } from './airport';
+import { flightNumber as airlineFlightNumber } from './flight-number';
+import { recordLocator as airlineRecordLocator } from './record-locator';
+import { seat as airlineSeat } from './seat';
 
 /**
  * Module to generate airline and airport related data.
@@ -34,9 +38,7 @@ export class AirlineModule extends ModuleBase {
    * @since 8.0.0
    */
   airport(): Airport {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.airline.airport
-    );
+    return airlineAirport(this.faker.fakerCore);
   }
 
   /**
@@ -48,9 +50,7 @@ export class AirlineModule extends ModuleBase {
    * @since 8.0.0
    */
   airline(): Airline {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.airline.airline
-    );
+    return airlineAirline(this.faker.fakerCore);
   }
 
   /**
@@ -62,9 +62,7 @@ export class AirlineModule extends ModuleBase {
    * @since 8.0.0
    */
   airplane(): Airplane {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.airline.airplane
-    );
+    return airlineAirplane(this.faker.fakerCore);
   }
 
   /**
@@ -100,22 +98,7 @@ export class AirlineModule extends ModuleBase {
       allowVisuallySimilarCharacters?: boolean;
     } = {}
   ): string {
-    const { allowNumerics = false, allowVisuallySimilarCharacters = false } =
-      options;
-    const excludedChars: string[] = [];
-    if (!allowNumerics) {
-      excludedChars.push(...numerics);
-    }
-
-    if (!allowVisuallySimilarCharacters) {
-      excludedChars.push(...visuallySimilarCharacters);
-    }
-
-    return this.faker.string.alphanumeric({
-      length: 6,
-      casing: 'upper',
-      exclude: excludedChars,
-    });
+    return airlineRecordLocator(this.faker.fakerCore, options);
   }
 
   /**
@@ -141,12 +124,7 @@ export class AirlineModule extends ModuleBase {
       aircraftType?: AircraftType;
     } = {}
   ): string {
-    const { aircraftType = Aircraft.Narrowbody } = options;
-    const maxRow = aircraftTypeMaxRows[aircraftType];
-    const allowedSeats = aircraftTypeSeats[aircraftType];
-    const row = this.faker.number.int({ min: 1, max: maxRow });
-    const seat = this.faker.helpers.arrayElement(allowedSeats);
-    return `${row}${seat}`;
+    return airlineSeat(this.faker.fakerCore, options);
   }
 
   /**
@@ -158,7 +136,7 @@ export class AirlineModule extends ModuleBase {
    * @since 8.0.0
    */
   aircraftType(): AircraftType {
-    return this.faker.helpers.enumValue(Aircraft);
+    return airlineAircraftType(this.faker.fakerCore);
   }
 
   /**
@@ -213,11 +191,6 @@ export class AirlineModule extends ModuleBase {
       addLeadingZeros?: boolean;
     } = {}
   ): string {
-    const { length = { min: 1, max: 4 }, addLeadingZeros = false } = options;
-    const flightNumber = this.faker.string.numeric({
-      length,
-      allowLeadingZeros: false,
-    });
-    return addLeadingZeros ? flightNumber.padStart(4, '0') : flightNumber;
+    return airlineFlightNumber(this.faker.fakerCore, options);
   }
 }

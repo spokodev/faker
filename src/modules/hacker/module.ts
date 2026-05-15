@@ -1,4 +1,10 @@
 import { ModuleBase } from '../../internal/module-base';
+import { abbreviation as hackerAbbreviation } from './abbreviation';
+import { adjective as hackerAdjective } from './adjective';
+import { ingverb as hackerIngverb } from './ingverb';
+import { noun as hackerNoun } from './noun';
+import { phrase as hackerPhrase } from './phrase';
+import { verb as hackerVerb } from './verb';
 
 /**
  * Module to generate hacker/IT words and phrases.
@@ -25,9 +31,7 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   abbreviation(): string {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.hacker.abbreviation
-    );
+    return hackerAbbreviation(this.faker.fakerCore);
   }
 
   /**
@@ -39,9 +43,7 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   adjective(): string {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.hacker.adjective
-    );
+    return hackerAdjective(this.faker.fakerCore);
   }
 
   /**
@@ -53,7 +55,7 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   noun(): string {
-    return this.faker.helpers.arrayElement(this.faker.definitions.hacker.noun);
+    return hackerNoun(this.faker.fakerCore);
   }
 
   /**
@@ -65,7 +67,7 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   verb(): string {
-    return this.faker.helpers.arrayElement(this.faker.definitions.hacker.verb);
+    return hackerVerb(this.faker.fakerCore);
   }
 
   /**
@@ -77,9 +79,7 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   ingverb(): string {
-    return this.faker.helpers.arrayElement(
-      this.faker.definitions.hacker.ingverb
-    );
+    return hackerIngverb(this.faker.fakerCore);
   }
 
   /**
@@ -92,6 +92,6 @@ export class HackerModule extends ModuleBase {
    * @since 2.0.1
    */
   phrase(): string {
-    return this.faker.helpers.fake(this.faker.definitions.hacker.phrase);
+    return hackerPhrase(this.faker.fakerCore);
   }
 }
