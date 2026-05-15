@@ -1,0 +1,22 @@
+import type { FakerCore } from '../../core';
+import { buzzAdjective } from '../company/buzz-adjective';
+import { buzzNoun } from '../company/buzz-noun';
+import { buzzVerb } from '../company/buzz-verb';
+
+/**
+ * Generates a random buzz phrase that can be used to demonstrate data being viewed by a manager.
+ *
+ * @param fakerCore The FakerCore to use.
+ *
+ * @example
+ * buzzPhrase(fakerCore) // 'cultivate synergistic e-markets'
+ *
+ * @since 8.0.0
+ */
+export function buzzPhrase(fakerCore: FakerCore): string {
+  return [
+    buzzVerb(fakerCore),
+    buzzAdjective(fakerCore),
+    buzzNoun(fakerCore),
+  ].join(' ');
+}
