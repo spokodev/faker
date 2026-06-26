@@ -1,0 +1,38 @@
+import type { FakerCore } from '../../core';
+import { CROCKFORDS_BASE32, dateToBase32 } from '../../internal/base32';
+import { toDate } from '../../internal/date';
+import { getDefaultRefDate } from '../../utils/get-default-ref-date';
+import { fromCharacters } from '../string/from-characters';
+
+/**
+ * Returns a ULID ([Universally Unique Lexicographically Sortable Identifier](https://github.com/ulid/spec)).
+ *
+ * @param fakerCore The FakerCore to use.
+ * @param options The optional options object.
+ * @param options.refDate The timestamp to encode into the ULID.
+ * The encoded timestamp is represented by the first 10 characters of the result.
+ * Defaults to `getDefaultRefDate(fakerCore)`.
+ *
+ * @example
+ * ulid(fakerCore) // '01ARZ3NDEKTSV4RRFFQ69G5FAV'
+ * ulid(fakerCore, { refDate: '2020-01-01T00:00:00.000Z' }) // '01DXF6DT00CX9QNNW7PNXQ3YR8'
+ *
+ * @since 9.1.0
+ */
+export function ulid(
+  fakerCore: FakerCore,
+  options: {
+    /**
+     * The date to use as reference point for the newly generated ULID encoded timestamp.
+     * The encoded timestamp is represented by the first 10 characters of the result.
+     *
+     * @default getDefaultRefDate(fakerCore)
+     */
+    refDate?: string | Date | number;
+  } = {}
+): string {
+  const { refDate = getDefaultRefDate(fakerCore) } = options;
+  const date = toDate(refDate);
+
+  return dateToBase32(date) + fromCharacters(fakerCore, CROCKFORDS_BASE32, 16);
+}
