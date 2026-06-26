@@ -4,7 +4,7 @@ import { toDate } from '../../internal/date';
 import { SimpleModuleBase } from '../../internal/module-base';
 import type { LiteralUnion } from '../../internal/types';
 import type { Casing } from '../../utils/types';
-import { uuidV4, uuidV7 } from './uuid';
+import { uuidV4, uuidV7 } from './_uuid';
 
 const UPPER_CHARS: ReadonlyArray<string> = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
 const LOWER_CHARS: ReadonlyArray<string> = [...'abcdefghijklmnopqrstuvwxyz'];

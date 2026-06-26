@@ -1,8 +1,8 @@
 import type { Faker, SimpleFaker } from '../..';
 import { FakerError } from '../../errors/faker-error';
 import { SimpleModuleBase } from '../../internal/module-base';
-import { fakeEval } from './eval';
-import { luhnCheckValue } from './luhn-check';
+import { fakeEval } from './_eval';
+import { luhnCheckValue } from './_luhn-check';
 
 /**
  * Returns a number based on given RegEx-based quantifier symbol or quantifier values.

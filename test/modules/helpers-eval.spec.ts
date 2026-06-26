@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { FakerError, faker } from '../../src';
-import { fakeEval } from '../../src/modules/helpers/eval';
+import { fakeEval } from '../../src/modules/helpers/_eval';
 
 describe('fakeEval()', () => {
   it('does not allow empty string input', () => {
